@@ -14,7 +14,7 @@ public class Contratista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
 
     @Column(name = "rut", nullable = false, unique = true, length = 15)
     private String rut; // Ej: "76.123.456-K"
@@ -36,7 +36,7 @@ public class Contratista {
     }
 
     // Constructor completo (Actualizado)
-    public Contratista(Long id, String rut, String razonSocial, String telefono, String contactoEmail, String estado) {
+    public Contratista(int id, String rut, String razonSocial, String telefono, String contactoEmail, String estado) {
         this.id = id;
         this.rut = rut;
         this.razonSocial = razonSocial;
@@ -46,11 +46,11 @@ public class Contratista {
     }
 
     // Getters y Setters Manuales
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

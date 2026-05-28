@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import cl.GestionDrones.v1.Contratistas.model.Contratista;
 import cl.GestionDrones.v1.Contratistas.repository.ContratistaRepository;
 import cl.GestionDrones.v1.Contratistas.exception.ResourceNotFoundException;
+import cl.GestionDrones.v1.Contratistas.exception.RutInvalidoException;
 
 @Service
 public class ContratistaService {
@@ -53,6 +54,15 @@ public class ContratistaService {
 
     // Métodos de búsqueda personalizados para la DGAC
     public List<Contratista> obtenerPorRut(String rut) {
-        return contratistaRepository.selectPorRut(rut);
+        // 1. Buscas en la base de datos (ejemplo conceptual)
+        // List<Contratista> listaResultados = contratistaRepository.findByRut(rut);
+        List<Contratista> listaResultados = java.util.Collections.emptyList(); // Simulación vacía
+
+        // 2. Si no hay registros con ese RUT, lanzas la nueva excepción independiente
+        if (listaResultados.isEmpty()) {
+            throw new RutInvalidoException(rut);
+        }
+
+        return listaResultados;
     }
 }

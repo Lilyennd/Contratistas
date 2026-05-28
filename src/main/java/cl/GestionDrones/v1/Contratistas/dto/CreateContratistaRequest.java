@@ -2,7 +2,7 @@ package cl.GestionDrones.v1.Contratistas.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+//import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 /**
@@ -20,15 +20,12 @@ public record CreateContratistaRequest(
         @NotBlank(message = "El nombre de la empresa o contratista es obligatorio")
         String nombreEmpresa,
 
-        @NotBlank(message = "El nombre de la persona de contacto es obligatorio")
-        String contacto,
-
         @NotBlank(message = "El teléfono de contacto es obligatorio")
         String telefono,
 
         @NotBlank(message = "El correo electrónico es obligatorio")
         @Email(message = "El formato del correo electrónico debe ser válido")
-        String correo,
+        String contactoEmail,
 
         @NotBlank(message = "El estado inicial de operaciones no puede ser vacío")
         String estado // Ejemplo: "HABILITADO", "SUSPENDIDO"

@@ -13,7 +13,7 @@ public class ContratistaMapper {
         return new Contratista(
                 0, 
                 request.rut(),
-                request.razonSocial(),
+                request.nombreEmpresa(),
                 request.telefono(),
                 request.contactoEmail(),
                 request.estado()
@@ -28,7 +28,7 @@ public class ContratistaMapper {
         return new Contratista(
                 id, // ID proveniente del path parameter
                 request.rut(),
-                request.razonSocial(),
+                request.nombreEmpresa(),
                 request.telefono(),
                 request.contactoEmail(),
                 request.estado()

@@ -20,7 +20,7 @@ public class Contratista {
     private String rut; // Ej: "76.123.456-K"
 
     @Column(name = "razon_social", nullable = false, length = 150)
-    private String razonSocial; // Nombre legal de la constructora, minera, etc.
+    private String nombreEmpresa; // Nombre legal de la constructora, minera, etc.
 
     @Column(name = "telefono", nullable = false, length = 20)
     private String telefono; // Ej: "+56912345678"
@@ -36,10 +36,10 @@ public class Contratista {
     }
 
     // Constructor completo (Actualizado)
-    public Contratista(int id, String rut, String razonSocial, String telefono, String contactoEmail, String estado) {
+    public Contratista(int id, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
         this.id = id;
         this.rut = rut;
-        this.razonSocial = razonSocial;
+        this.nombreEmpresa = nombreEmpresa;
         this.telefono = telefono;
         this.contactoEmail = contactoEmail;
         this.estado = estado;
@@ -62,12 +62,12 @@ public class Contratista {
         this.rut = rut;
     }
 
-    public String getRazonSocial() {
-        return razonSocial;
+    public String getnombreEmpresa() {
+        return nombreEmpresa;
     }
 
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
+    public void setnombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
     }
 
     public String getTelefono() {

@@ -107,4 +107,22 @@ public class GlobalExceptionHandler {
         problem.setProperty("tipoExcepcion", ex.getClass().getSimpleName());
         return problem;
     }
+    /**
+     * Maneja casos donde el RUT de un contratista es inválido o no arrojó resultados en la base de datos
+     */
+    @ExceptionHandler(RutInvalidoException.class)
+    public ProblemDetail handleRutInvalido(RutInvalidoException ex) {
+        System.out.println("🟡 GlobalExceptionHandler [Contratistas] - Problema detectado con el RUT: " + ex.getRut());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, // Mantiene el 404 al no encontrar registros con ese RUT
+                ex.getMessage()
+        );
+
+        problem.setTitle("RUT Contratista Error");
+        problem.setProperty("timestamp", Instant.now());
+        problem.setProperty("rutIngresado", ex.getRut()); // Muestra el RUT afectado en el JSON de respuesta
+        
+        return problem;
+    }
 }

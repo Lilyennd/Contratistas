@@ -17,6 +17,7 @@ import cl.GestionDrones.v1.Contratistas.dto.UpdateContratistaRequest;
 import cl.GestionDrones.v1.Contratistas.mapper.ContratistaMapper;
 import cl.GestionDrones.v1.Contratistas.model.Contratista;
 import cl.GestionDrones.v1.Contratistas.service.ContratistaService;
+import cl.GestionDrones.v1.Contratistas.exception.RutInvalidoException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -25,7 +26,6 @@ public class ContratistaController {
 
         private final ContratistaService contratistaService;
 
-        // Inyección por constructor
         public ContratistaController(ContratistaService contratistaService) {
                 this.contratistaService = contratistaService;
         }
@@ -33,46 +33,99 @@ public class ContratistaController {
         @GetMapping
         public ResponseEntity<List<Contratista>> listarContratistas() {
                 List<Contratista> contratistas = contratistaService.getContratistas();
+                
+                // IF: Si la lista está vacía, podrías decidir enviar un 204 No Content
+                if (contratistas.isEmpty()) {
+                        return ResponseEntity.noContent().build();
+                }
+                
                 return ResponseEntity.ok(contratistas);
         }
 
         @PostMapping
         public ResponseEntity<Contratista> agregarContratista(@Valid @RequestBody CreateContratistaRequest request) {
-                // @Valid ejecuta las validaciones de Jakarta (formato RUT, Email, etc.)
+                // IF: Validación manual del RUT en el controlador antes de procesar
+                if (request.rut() == null || request.rut().length() < 8) {
+                        throw new RutInvalidoException(request.rut(), "El RUT no cumple con el largo mínimo.");
+                }
+
                 Contratista nuevoContratista = contratistaService.saveContratista(ContratistaMapper.toModel(request));
+                
+                if (nuevoContratista == null) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+                
                 return ResponseEntity.status(HttpStatus.CREATED).body(nuevoContratista);
         }
 
-        @GetMapping("{id}")
+        @GetMapping("/{id}")
         public ResponseEntity<Contratista> buscarContratista(@PathVariable int id) {
-                // El Service se encarga de lanzar ResourceNotFoundException si no existe
                 Contratista contratista = contratistaService.getContratistaId(id);
+                
+                // IF: Si no se encuentra el contratista por ID
+                if (contratista == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                
                 return ResponseEntity.ok(contratista);
         }
 
-        @PutMapping("{id}")
+        @PutMapping("/{id}")
         public ResponseEntity<Contratista> actualizarContratista(@PathVariable int id,
                         @Valid @RequestBody UpdateContratistaRequest request) {
                 
+                // IF: Validación del RUT que viene en la petición de actualización
+                if (request.rut() == null || request.rut().contains(" ")) {
+                        throw new RutInvalidoException(request.rut(), "El RUT modificado no puede contener espacios en blanco.");
+                }
+
                 Contratista contratistaActualizado = contratistaService.updateContratista(ContratistaMapper.toModel(id, request));
+                
+                if (contratistaActualizado == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+                
                 return ResponseEntity.ok(contratistaActualizado);
         }
 
-        @DeleteMapping("{id}")
+        @DeleteMapping("/{id}")
         public ResponseEntity<Void> eliminarContratista(@PathVariable int id) {
+                // IF: Validación del ID antes de proceder a borrar
+                if (id <= 0) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+
                 contratistaService.deleteContratista(id);
-                return ResponseEntity.noContent().build(); // 204 No Content
+                return ResponseEntity.noContent().build(); 
         }
 
         @GetMapping("/total")
         public ResponseEntity<Integer> totalContratistas() {
                 int total = contratistaService.totalContratistasV2();
+                
+                // IF: Si el total es un número negativo por algún error de sincronización
+                if (total < 0) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+                }
+                
                 return ResponseEntity.ok(total);
         }
 
         @GetMapping("/rut/{rut}")
         public ResponseEntity<List<Contratista>> selectPorRut(@PathVariable String rut) {
+                // IF: Si el parámetro RUT enviado por URL está vacío o tiene un formato absurdo
+                if (rut == null || rut.trim().length() < 8) {
+                        // Aquí gatillamos tu excepción personalizada directamente desde el controlador
+                        throw new RutInvalidoException(rut, "El formato de consulta de RUT en la URL es inválido.");
+                }
+
                 List<Contratista> contratistas = contratistaService.obtenerPorRut(rut);
+                
+                // IF: Si no hay contratistas asociados a ese RUT exacto
+                if (contratistas.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(contratistas);
+                }
+                
                 return ResponseEntity.ok(contratistas);
         }
 }

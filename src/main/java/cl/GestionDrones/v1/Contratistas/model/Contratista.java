@@ -15,11 +15,11 @@ public class Contratista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id; // Cambiado de int a long
 
     // Posicionado al principio de los atributos
     @Column(name = "id_empresa_proveedora", nullable = false)
-    private int idEmpresaProveedora;
+    private long idEmpresaProveedora; // Cambiado de int a long
 
     @Column(name = "rut", nullable = false, unique = true, length = 15)
     private String rut; // Ej: "76.123.456-K"
@@ -40,8 +40,8 @@ public class Contratista {
     public Contratista() {
     }
 
-    // Constructor completo (Actualizado con idEmpresaProveedora al principio)
-    public Contratista(int id, int idEmpresaProveedora, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
+    // Constructor completo (Actualizado con tipos long al principio)
+    public Contratista(long id, long idEmpresaProveedora, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
         this.id = id;
         this.idEmpresaProveedora = idEmpresaProveedora;
         this.rut = rut;
@@ -52,19 +52,19 @@ public class Contratista {
     }
 
     // Getters y Setters Manuales
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getIdEmpresaProveedora() {
+    public long getIdEmpresaProveedora() {
         return idEmpresaProveedora;
     }
 
-    public void setIdEmpresaProveedora(int idEmpresaProveedora) {
+    public void setIdEmpresaProveedora(long idEmpresaProveedora) {
         this.idEmpresaProveedora = idEmpresaProveedora;
     }
 

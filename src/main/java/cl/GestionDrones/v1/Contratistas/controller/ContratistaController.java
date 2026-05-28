@@ -128,4 +128,18 @@ public class ContratistaController {
                 
                 return ResponseEntity.ok(contratistas);
         }
+
+        /**
+         * NUEVO ENDPOINT: Obtiene contratistas filtrados por Empresa Proveedora.
+         * Requerimiento crítico del negocio para la visibilidad de flotas de DroneChile SpA.
+         */
+        @GetMapping("/proveedora/{idEmpresaProveedora}")
+        public ResponseEntity<List<Contratista>> listarPorEmpresaProveedora(@PathVariable int idEmpresaProveedora) {
+                if (idEmpresaProveedora <= 0) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+                
+                List<Contratista> contratistas = contratistaService.obtenerPorEmpresaProveedora(idEmpresaProveedora);
+                return ResponseEntity.ok(contratistas);
+        }
 }

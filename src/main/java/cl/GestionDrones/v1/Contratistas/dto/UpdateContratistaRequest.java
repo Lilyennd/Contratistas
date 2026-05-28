@@ -2,13 +2,18 @@ package cl.GestionDrones.v1.Contratistas.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 /**
  * DTO para actualizar un contratista existente (PUT).
- * No incluye ID porque se obtiene del path parameter en la URL del endpoint.
+ * No incluye ID del contratista porque se obtiene del path parameter en la URL del endpoint,
+ * pero sí incluye el ID de la empresa proveedora que lo administra.
  */
 public record UpdateContratistaRequest(
+        @NotNull(message = "El ID de la empresa proveedora es obligatorio")
+        int idEmpresaProveedora,
+
         @NotBlank(message = "El RUT de la empresa es obligatorio")
         @Pattern(
             regexp = "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]{1}$", 
@@ -27,5 +32,5 @@ public record UpdateContratistaRequest(
         String contactoEmail,
 
         @NotBlank(message = "El estado no puede ser vacío")
-        String estado // Ejemplo: "HABILITADO", "SUSPENDIDO", "EN_REVISION"
+        String estado // Ejemplo: "ACTIVO", "INACTIVO"
 ) {}

@@ -1,11 +1,12 @@
 package cl.GestionDrones.v1.Contratistas.model;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-//import java.time.LocalDate;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "empresas_contratistas")
@@ -16,10 +17,14 @@ public class Contratista {
     @Column(name = "id")
     private int id;
 
+    // Posicionado al principio de los atributos
+    @Column(name = "id_empresa_proveedora", nullable = false)
+    private int idEmpresaProveedora;
+
     @Column(name = "rut", nullable = false, unique = true, length = 15)
     private String rut; // Ej: "76.123.456-K"
 
-    @Column(name = "razon_social", nullable = false, length = 150)
+    @Column(name = "nombreEmpresa", nullable = false, length = 150)
     private String nombreEmpresa; // Nombre legal de la constructora, minera, etc.
 
     @Column(name = "telefono", nullable = false, length = 20)
@@ -35,9 +40,10 @@ public class Contratista {
     public Contratista() {
     }
 
-    // Constructor completo (Actualizado)
-    public Contratista(int id, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
+    // Constructor completo (Actualizado con idEmpresaProveedora al principio)
+    public Contratista(int id, int idEmpresaProveedora, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
         this.id = id;
+        this.idEmpresaProveedora = idEmpresaProveedora;
         this.rut = rut;
         this.nombreEmpresa = nombreEmpresa;
         this.telefono = telefono;
@@ -52,6 +58,14 @@ public class Contratista {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIdEmpresaProveedora() {
+        return idEmpresaProveedora;
+    }
+
+    public void setIdEmpresaProveedora(int idEmpresaProveedora) {
+        this.idEmpresaProveedora = idEmpresaProveedora;
     }
 
     public String getRut() {

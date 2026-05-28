@@ -11,7 +11,8 @@ public class ContratistaMapper {
      */
     public static Contratista toModel(CreateContratistaRequest request) {
         return new Contratista(
-                0, 
+                0, // id (autogenerado por la BD)
+                request.idEmpresaProveedora(), // Nuevo campo mapeado en la segunda posición
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),
@@ -27,6 +28,7 @@ public class ContratistaMapper {
     public static Contratista toModel(int id, UpdateContratistaRequest request) {
         return new Contratista(
                 id, // ID proveniente del path parameter
+                request.idEmpresaProveedora(), // Nuevo campo mapeado en la segunda posición
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),

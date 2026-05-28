@@ -2,14 +2,18 @@ package cl.GestionDrones.v1.Contratistas.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-//import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 /**
  * DTO para registrar un nuevo contratista (POST).
- * No incluye ID porque se genera automáticamente en la base de datos.
+ * No incluye ID del contratista porque se genera automáticamente en la base de datos,
+ * pero sí requiere el ID de la empresa proveedora que lo administra.
  */
 public record CreateContratistaRequest(
+        @NotNull(message = "El ID de la empresa proveedora es obligatorio")
+        int idEmpresaProveedora,
+
         @NotBlank(message = "El RUT de la empresa es obligatorio")
         @Pattern(
             regexp = "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]{1}$", 
@@ -28,5 +32,5 @@ public record CreateContratistaRequest(
         String contactoEmail,
 
         @NotBlank(message = "El estado inicial de operaciones no puede ser vacío")
-        String estado // Ejemplo: "HABILITADO", "SUSPENDIDO"
+        String estado // Ejemplo: "ACTIVO", "INACTIVO"
 ) {}

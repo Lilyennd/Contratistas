@@ -65,4 +65,14 @@ public class ContratistaService {
 
         return listaResultados;
     }
+
+    public List<Contratista> obtenerPorEmpresaProveedora(int idEmpresaProveedora) {
+        List<Contratista> contratistas = contratistaRepository.selectPorEmpresaProveedora(idEmpresaProveedora);
+        
+        if (contratistas.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron contratistas asociados a la empresa proveedora con ID " + idEmpresaProveedora);
+        }
+        
+        return contratistas;
+    }
 }

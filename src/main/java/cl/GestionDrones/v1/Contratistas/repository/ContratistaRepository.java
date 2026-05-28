@@ -11,6 +11,9 @@ public interface ContratistaRepository extends JpaRepository<Contratista, Intege
     @Query(value = "SELECT * FROM Contratistas WHERE rut = :rut", nativeQuery = true)
     List<Contratista> selectPorRut(@Param("rut") String rut);
 
+    @Query(value = "SELECT * FROM empresas_contratistas WHERE id_empresa_proveedora = :idEmpresaProveedora", nativeQuery = true)
+    List<Contratista> selectPorEmpresaProveedora(@Param("idEmpresaProveedora") int idEmpresaProveedora);
+
     default int totalContratistas() {
         return (int) this.count(); // ← "this" se refiere a la instancia del repository
     }

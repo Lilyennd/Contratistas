@@ -1,6 +1,5 @@
 package cl.GestionDrones.v1.Contratistas.exception;
 
-import cl.GestionDrones.v1.Contratistas.exception.ResourceNotFoundException;
 import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +10,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 /**
  * GlobalExceptionHandler modernizado con Problem Details API (RFC 7807)
  * Personalizado para el módulo de Gestión de Contratistas - DGAC (2026)

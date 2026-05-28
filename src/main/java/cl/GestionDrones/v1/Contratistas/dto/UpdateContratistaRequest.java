@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Pattern;
  */
 public record UpdateContratistaRequest(
         @NotNull(message = "El ID de la empresa proveedora es obligatorio")
-        int idEmpresaProveedora,
+        long idEmpresaProveedora,
 
         @NotBlank(message = "El RUT de la empresa es obligatorio")
         @Pattern(

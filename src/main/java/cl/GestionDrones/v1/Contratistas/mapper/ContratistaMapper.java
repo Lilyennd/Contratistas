@@ -7,12 +7,12 @@ import cl.GestionDrones.v1.Contratistas.model.Contratista;
 public class ContratistaMapper {
     /**
      * Convierte CreateContratistaRequest a Contratista (para POST).
-     * El ID se pasa como 0 temporalmente ya que la base de datos lo autogenerará.
+     * El ID se pasa como 0L (Long) ya que la base de datos lo autogenerará.
      */
     public static Contratista toModel(CreateContratistaRequest request) {
         return new Contratista(
-                0, // id (autogenerado por la BD)
-                request.idEmpresaProveedora(), // Nuevo campo mapeado en la segunda posición
+                0, // CORREGIDO: Se usa 0L para especificar explícitamente el tipo long
+                request.idEmpresaProveedora(), // Asegúrate de que el DTO devuelva long
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),
@@ -25,10 +25,11 @@ public class ContratistaMapper {
      * Convierte UpdateContratistaRequest a Contratista (para PUT).
      * El ID se obtiene del path parameter de la URL.
      */
-    public static Contratista toModel(int id, UpdateContratistaRequest request) {
+    // CORREGIDO: Cambiado de 'int id' a 'long id'
+    public static Contratista toModel(long id, UpdateContratistaRequest request) {
         return new Contratista(
-                id, // ID proveniente del path parameter
-                request.idEmpresaProveedora(), // Nuevo campo mapeado en la segunda posición
+                id, // ID de tipo long proveniente del path parameter
+                request.idEmpresaProveedora(), // Asegúrate de que el DTO devuelva long
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),

@@ -1,6 +1,9 @@
 package cl.GestionDrones.v1.Contratistas.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cl.GestionDrones.v1.Contratistas.dto.CreateContratistaRequest;
@@ -56,7 +60,7 @@ public class ContratistaController {
                 return ResponseEntity.status(HttpStatus.CREATED).body(nuevoContratista);
         }
 
-        // CORREGIDO: cambiado 'int id' por 'long id'
+        
         @GetMapping("/{id}")
         public ResponseEntity<Contratista> buscarContratista(@PathVariable long id) {
                 Contratista contratista = contratistaService.getContratistaId(id);
@@ -68,7 +72,7 @@ public class ContratistaController {
                 return ResponseEntity.ok(contratista);
         }
 
-        // CORREGIDO: cambiado 'int id' por 'long id'
+        
         @PutMapping("/{id}")
         public ResponseEntity<Contratista> actualizarContratista(@PathVariable long id,
                         @Valid @RequestBody UpdateContratistaRequest request) {
@@ -76,10 +80,7 @@ public class ContratistaController {
                 if (request.rut() == null || request.rut().contains(" ")) {
                         throw new RutInvalidoException(request.rut(), "El RUT modificado no puede contener espacios en blanco.");
                 }
-
-                // Asegúrate que tu ContratistaMapper reciba un long en este método
                 Contratista contratistaActualizado = contratistaService.updateContratista(ContratistaMapper.toModel(id, request));
-                
                 if (contratistaActualizado == null) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 }
@@ -124,17 +125,16 @@ public class ContratistaController {
                 return ResponseEntity.ok(contratistas);
         }
 
-        /**
-         * NUEVO ENDPOINT: Obtiene contratistas filtrados por Empresa Proveedora.
-         * Requerimiento crítico del negocio para la visibilidad de flotas de DroneChile SpA.
-         */
-        @GetMapping("/proveedora/{idEmpresaProveedora}")
-        public ResponseEntity<List<Contratista>> listarPorEmpresaProveedora(@PathVariable long idEmpresaProveedora) {
-                if (idEmpresaProveedora <= 0) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-                }
-                
-                List<Contratista> contratistas = contratistaService.obtenerPorEmpresaProveedora(idEmpresaProveedora);
-                return ResponseEntity.ok(contratistas);
+
+        @GetMapping("/id")
+    public ResponseEntity<Map<String, Long>> obtenerIdPorNombre(@RequestParam String nombre) {
+        try {
+            Long id = contratistaService.obtenerIdPorNombre(nombre);
+            Map<String, Long> response = Collections.singletonMap("id", id);
+            
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); 
         }
+    }
 }

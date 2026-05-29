@@ -1,6 +1,7 @@
 package cl.GestionDrones.v1.Contratistas.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cl.GestionDrones.v1.Contratistas.model.Contratista;
@@ -11,7 +12,7 @@ import cl.GestionDrones.v1.Contratistas.exception.RutInvalidoException;
 @Service
 public class ContratistaService {
     
-    @Autowired
+  @Autowired
     private ContratistaRepository contratistaRepository;
 
     public List<Contratista> getContratistas() {
@@ -22,7 +23,6 @@ public class ContratistaService {
         return contratistaRepository.save(contratista);
     }
 
-    // Cambiado 'int id' a 'long id'
     public Contratista getContratistaId(long id) {
         return contratistaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("El contratista con ID " + id + " no está registrado en la DGAC."));
@@ -35,7 +35,6 @@ public class ContratistaService {
         return contratistaRepository.save(contratista);
     }
 
-    // Cambiado 'int id' a 'long id'
     public String deleteContratista(long id) {
         if (!contratistaRepository.existsById(id)) {
             throw new ResourceNotFoundException("No se puede eliminar: El contratista con ID " + id + " no existe.");
@@ -63,13 +62,13 @@ public class ContratistaService {
         return listaResultados;
     }
 
-    public List<Contratista> obtenerPorEmpresaProveedora(long idEmpresaProveedora) {
-        List<Contratista> contratistas = contratistaRepository.selectPorEmpresaProveedora(idEmpresaProveedora);
-        
-        if (contratistas.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron contratistas asociados a la empresa proveedora con ID " + idEmpresaProveedora);
+   
+ // id
+    public Long obtenerIdPorNombre(String nombre) {
+        Long id = contratistaRepository.findIdByNombre(nombre);
+        if (id == null) {
+            throw new RuntimeException("Empresa contratista no encontrada con el nombre: " + nombre);
         }
-        
-        return contratistas;
+        return id;
     }
 }

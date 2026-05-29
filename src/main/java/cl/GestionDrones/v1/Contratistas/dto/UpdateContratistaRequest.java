@@ -5,11 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-/**
- * DTO para actualizar un contratista existente (PUT).
- * No incluye ID del contratista porque se obtiene del path parameter en la URL del endpoint,
- * pero sí incluye el ID de la empresa proveedora que lo administra.
- */
+
 public record UpdateContratistaRequest(
         @NotNull(message = "El ID de la empresa proveedora es obligatorio")
         long idEmpresaProveedora,
@@ -32,5 +28,5 @@ public record UpdateContratistaRequest(
         String contactoEmail,
 
         @NotBlank(message = "El estado no puede ser vacío")
-        String estado // Ejemplo: "ACTIVO", "INACTIVO"
+        String estado 
 ) {}

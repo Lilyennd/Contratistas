@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "empresas_contratistas")
@@ -15,35 +14,30 @@ public class Contratista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id; // Cambiado de int a long
-
-    // Posicionado al principio de los atributos
-    @Column(name = "id_empresa_proveedora", nullable = false)
-    private long idEmpresaProveedora; // Cambiado de int a long
+    private long id;
 
     @Column(name = "rut", nullable = false, unique = true, length = 15)
-    private String rut; // Ej: "76.123.456-K"
+    private String rut; 
 
     @Column(name = "nombreEmpresa", nullable = false, length = 150)
-    private String nombreEmpresa; // Nombre legal de la constructora, minera, etc.
+    private String nombreEmpresa; 
 
     @Column(name = "telefono", nullable = false, length = 20)
-    private String telefono; // Ej: "+56912345678"
+    private String telefono; 
 
     @Column(name = "contacto_email", nullable = false, length = 100)
     private String contactoEmail;
 
     @Column(name = "estado", nullable = false, length = 30)
-    private String estado; // ACTIVO, INACTIVO
+    private String estado; 
 
-    // Constructor sin argumentos (Requerido por JPA)
+  
     public Contratista() {
     }
 
-    // Constructor completo (Actualizado con tipos long al principio)
+
     public Contratista(long id, long idEmpresaProveedora, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
         this.id = id;
-        this.idEmpresaProveedora = idEmpresaProveedora;
         this.rut = rut;
         this.nombreEmpresa = nombreEmpresa;
         this.telefono = telefono;
@@ -51,7 +45,7 @@ public class Contratista {
         this.estado = estado;
     }
 
-    // Getters y Setters Manuales
+   
     public long getId() {
         return id;
     }
@@ -60,13 +54,6 @@ public class Contratista {
         this.id = id;
     }
 
-    public long getIdEmpresaProveedora() {
-        return idEmpresaProveedora;
-    }
-
-    public void setIdEmpresaProveedora(long idEmpresaProveedora) {
-        this.idEmpresaProveedora = idEmpresaProveedora;
-    }
 
     public String getRut() {
         return rut;

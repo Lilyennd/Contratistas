@@ -5,11 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-/**
- * DTO para registrar un nuevo contratista (POST).
- * No incluye ID del contratista porque se genera automáticamente en la base de datos,
- * pero sí requiere el ID de la empresa proveedora que lo administra.
- */
+
 public record CreateContratistaRequest(
         @NotNull(message = "El ID de la empresa proveedora es obligatorio")
         long idEmpresaProveedora,
@@ -32,5 +28,5 @@ public record CreateContratistaRequest(
         String contactoEmail,
 
         @NotBlank(message = "El estado inicial de operaciones no puede ser vacío")
-        String estado // Ejemplo: "ACTIVO", "INACTIVO"
+        String estado 
 ) {}

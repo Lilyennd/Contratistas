@@ -10,10 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-/**
- * GlobalExceptionHandler modernizado con Problem Details API (RFC 7807)
- * Personalizado para el módulo de Gestión de Contratistas - DGAC (2026)
- */
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -21,9 +18,7 @@ public class GlobalExceptionHandler {
         System.out.println("✅ GlobalExceptionHandler DE CONTRATISTAS SE HA REGISTRADO CORRECTAMENTE");
     }
 
-    /**
-     * Maneja errores de validación Jakarta con Problem Details (Ej: RUT inválido, campos vacíos)
-     */
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationErrors(MethodArgumentNotValidException ex) {
         System.out.println("🔴 GlobalExceptionHandler [Contratistas] - Errores de validación detectados");
@@ -36,7 +31,7 @@ public class GlobalExceptionHandler {
         problem.setTitle("Validation Error - Contratista");
         problem.setProperty("timestamp", Instant.now());
 
-        // Extraer errores con streams modernos
+
         Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
@@ -49,9 +44,7 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    /**
-     * Maneja errores de parseo de JSON (Ej: Estructura mal armada al intentar crear/editar un contratista)
-     */
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleJsonParseError(HttpMessageNotReadableException ex) {
         System.out.println("🟡 Error de parseo JSON en módulo Contratistas");
@@ -68,9 +61,7 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    /**
-     * Maneja casos donde un Contratista o recurso asociado no existe en la BD
-     */
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
         System.out.println("🟡 Contratista o recurso no encontrado");
@@ -85,9 +76,7 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    /**
-     * Maneja errores internos y caídas generales del servidor
-     */
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneralException(Exception ex) {
         System.out.println("🔴 EXCEPCIÓN CAPTURADA EN CONTRATISTAS: " + ex.getClass().getName());
@@ -105,9 +94,7 @@ public class GlobalExceptionHandler {
         problem.setProperty("tipoExcepcion", ex.getClass().getSimpleName());
         return problem;
     }
-    /**
-     * Maneja casos donde el RUT de un contratista es inválido o no arrojó resultados en la base de datos
-     */
+
     @ExceptionHandler(RutInvalidoException.class)
     public ProblemDetail handleRutInvalido(RutInvalidoException ex) {
         System.out.println("🟡 GlobalExceptionHandler [Contratistas] - Problema detectado con el RUT: " + ex.getRut());

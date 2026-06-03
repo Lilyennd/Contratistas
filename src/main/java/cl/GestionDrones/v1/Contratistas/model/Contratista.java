@@ -36,7 +36,7 @@ public class Contratista {
     }
 
 
-    public Contratista(long id, long idEmpresaProveedora, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
+    public Contratista(long id, String rut, String nombreEmpresa, String telefono, String contactoEmail, String estado) {
         this.id = id;
         this.rut = rut;
         this.nombreEmpresa = nombreEmpresa;

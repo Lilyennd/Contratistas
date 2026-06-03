@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import cl.GestionDrones.v1.Contratistas.dto.ConsolidadoOperacionResponse;
 import cl.GestionDrones.v1.Contratistas.dto.CreateContratistaRequest;
 import cl.GestionDrones.v1.Contratistas.dto.UpdateContratistaRequest;
 import cl.GestionDrones.v1.Contratistas.mapper.ContratistaMapper;
@@ -137,4 +138,11 @@ public class ContratistaController {
             return ResponseEntity.notFound().build(); 
         }
     }
+
+
+        @GetMapping("/{id}/consolidado")
+        public ResponseEntity<ConsolidadoOperacionResponse> getConsolidadoOperacionResponse(@PathVariable long id) {
+        ConsolidadoOperacionResponse respuesta = contratistaService.obtenerConsolidadoPorContratista(id);
+        return ResponseEntity.ok(respuesta);
+}
 }

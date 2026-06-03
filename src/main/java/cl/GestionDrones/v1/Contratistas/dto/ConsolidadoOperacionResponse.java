@@ -3,9 +3,11 @@ package cl.GestionDrones.v1.Contratistas.dto;
 import java.util.List;
 
 public record ConsolidadoOperacionResponse(
-        long idContratista,
-        String rutEmpresa,
+        long id,
+        String rut,
         String nombreEmpresa,
-        String estadoContratista,
+        String telefono,
+        String contactoEmail,
+        String estado,
         List<DetalleVueloEnriquecido> vuelos) 
 {}

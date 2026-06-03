@@ -8,11 +8,11 @@
 		<version>3.3.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>bibliotecaduoc</artifactId>
+	<groupId>cl.GestionDrones.v1</groupId>
+	<artifactId>contratistas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bibliotecaduoc</name>
-	<description>buscador de libros disponibles</description>
+	<name>Contratistas de Drones</name>
+	<description>gestion de contratistas de drones</description>
 	<url/>
 	<licenses>
 		<license/>

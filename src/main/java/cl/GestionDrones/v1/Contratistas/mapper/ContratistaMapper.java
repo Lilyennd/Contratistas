@@ -9,7 +9,6 @@ public class ContratistaMapper {
     public static Contratista toModel(CreateContratistaRequest request) {
         return new Contratista(
                 0, 
-                request.idEmpresaProveedora(), 
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),
@@ -22,7 +21,6 @@ public class ContratistaMapper {
     public static Contratista toModel(long id, UpdateContratistaRequest request) {
         return new Contratista(
                 id, 
-                request.idEmpresaProveedora(), 
                 request.rut(),
                 request.nombreEmpresa(),
                 request.telefono(),

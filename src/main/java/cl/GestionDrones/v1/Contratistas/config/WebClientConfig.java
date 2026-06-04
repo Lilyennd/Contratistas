@@ -13,7 +13,7 @@ public class WebClientConfig {
 
     @Bean
     public WebClient planesDeVuelosWebClient(WebClient.Builder builder) {
-        return builder.baseUrl("http://localhost:8083/api/planes-de-vuelos").build();
+        return builder.baseUrl("http://localhost:8083/api/v1/planesDeVuelos").build();
     }
 
     @Bean

@@ -2,8 +2,10 @@ package cl.GestionDrones.v1.Contratistas.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,73 +21,86 @@ import cl.GestionDrones.v1.Contratistas.repository.ContratistaRepository;
 
 @Service
 public class ContratistaService {
-    
+
     @Autowired
     private ContratistaRepository contratistaRepository;
 
-    // Instanciamos WebClient para realizar las llamadas HTTP externas
-    private final WebClient webClient = WebClient.builder().build();
+    // ✅ Inyectar los WebClients definidos en WebClientConfig
+    private final WebClient aeronavesWebClient;
+    private final WebClient planesDeVuelosWebClient;
+    private final WebClient pilotosWebClient;
 
-    // DEFINICIÓN DE PUERTOS (Cambia estos números por los puertos reales en los que corren tus microservicios)
-    private final String URL_PLANES = "http://localhost:8083/api/planes-vuelo"; 
-    private final String URL_PILOTOS = "http://localhost:8081/api/v1/pilotos";      
-    private final String URL_AERONAVES = "http://localhost:8082/api/v1/aeronaves";
+    @Autowired
+    public ContratistaService(
+            @Qualifier("aeronavesWebClient") WebClient aeronavesWebClient,
+            @Qualifier("planesDeVuelosWebClient") WebClient planesDeVuelosWebClient,
+            @Qualifier("pilotosWebClient") WebClient pilotosWebClient) {
+        this.aeronavesWebClient = aeronavesWebClient;
+        this.planesDeVuelosWebClient = planesDeVuelosWebClient;
+        this.pilotosWebClient = pilotosWebClient;
+    }
 
-    public ConsolidadoOperacionResponse obtenerConsolidadoPorContratista(long idContratista) {
-        
-        Contratista contratista = getContratistaId(idContratista);
+    public ConsolidadoOperacionResponse obtenerConsolidadoPorRut(String rut) {
+    List<Contratista> contratistas = contratistaRepository.findByRut(rut);
+    if (contratistas.isEmpty()) {
+        throw new ResourceNotFoundException("Contratista no encontrado con RUT: " + rut);
+    }
+    Contratista contratista = contratistas.get(0);
 
-        
-        List<PlanesDeVuelosResponse> todosLosPlanes = webClient.get()
-                .uri(URL_PLANES)
-                .retrieve()
-                .bodyToFlux(PlanesDeVuelosResponse.class) 
-                .collectList()
-                .block();
-
-        if (todosLosPlanes == null) {
-            todosLosPlanes = Collections.emptyList();
+        List<PlanesDeVuelosResponse> planesVuelo;
+        try {
+            // ✅ Usar el WebClient inyectado, solo la URI relativa
+            planesVuelo = planesDeVuelosWebClient.get()
+                    .uri("/contratista/" + contratista.getRut())
+                    .retrieve()
+                    .bodyToFlux(PlanesDeVuelosResponse.class)
+                    .collectList()
+                    .block();
+        } catch (Exception e) {
+            planesVuelo = Collections.emptyList();
+            System.out.println("🔴 Error al conectar con Planes de Vuelo: " + e.getMessage());
         }
 
+        List<DetalleVueloEnriquecido> vuelosEnriquecidos = Collections.emptyList();
 
-        List<DetalleVueloEnriquecido> vuelosEnriquecidos = todosLosPlanes.stream()
-            .map(plan -> {
-                
-                // Limpieza del RUN para el servicio de pilotos
-                String runNumerico = plan.runPiloto().replaceAll("[^0-9]", "");
-                int runLimpio = runNumerico.isEmpty() ? 0 : Integer.parseInt(runNumerico);
-                
-                // Consultamos al microservicio de Pilotos por HTTP usando su endpoint de búsqueda por RUN
-                List<PilotoResponse> listaPilotos = webClient.get()
-                        .uri(URL_PILOTOS + "/buscarPorRun/" + runLimpio)
-                        .retrieve()
-                        .bodyToFlux(PilotoResponse.class)
-                        .collectList()
-                        .block();
+        if (planesVuelo != null && !planesVuelo.isEmpty()) {
+            vuelosEnriquecidos = planesVuelo.stream().map(plan -> {
+                PilotoResponse piloto = null;
+                AeronaveResponse aeronave = null;
 
-                PilotoResponse pilotoDto = (listaPilotos != null && !listaPilotos.isEmpty()) ? listaPilotos.get(0) : null;
+                try {
+                    // ✅ URI relativa al baseUrl del bean
+                    piloto = pilotosWebClient.get()
+                            .uri("/run/" + plan.runPiloto())
+                            .retrieve()
+                            .bodyToMono(PilotoResponse.class)
+                            .block();
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo obtener piloto para RUN: " + plan.runPiloto());
+                }
 
-                List<AeronaveResponse> listaAeronaves = webClient.get()
-                        .uri(URL_AERONAVES + "/obtenerPorPatente/" + plan.patenteDron())
-                        .retrieve()
-                        .bodyToFlux(AeronaveResponse.class)
-                        .collectList()
-                        .block();
+                try {
+                    aeronave = aeronavesWebClient.get()
+                            .uri("/patente/" + plan.patenteDron())
+                            .retrieve()
+                            .bodyToMono(AeronaveResponse.class)
+                            .block();
+                } catch (Exception e) {
+                    System.out.println("⚠️ No se pudo obtener aeronave para patente: " + plan.patenteDron());
+                }
 
-                AeronaveResponse aeronaveDto = (listaAeronaves != null && !listaAeronaves.isEmpty()) ? listaAeronaves.get(0) : null;
-
-                return new DetalleVueloEnriquecido(plan, pilotoDto, aeronaveDto);
-            })
-            .toList();
+                return new DetalleVueloEnriquecido(plan, piloto, aeronave);
+            }).collect(Collectors.toList());
+        }
 
         return new ConsolidadoOperacionResponse(
-            contratista.getId(),
-            contratista.getRut(),
-            contratista.getnombreEmpresa(), 
-            contratista.getTelefono(),
-            contratista.getContactoEmail(),
-            contratista.getEstado(),
-            vuelosEnriquecidos
+                contratista.getId(),
+                contratista.getRut(),
+                contratista.getnombreEmpresa(),
+                contratista.getTelefono(),
+                contratista.getContactoEmail(),
+                contratista.getEstado(),
+                vuelosEnriquecidos
         );
     }
 

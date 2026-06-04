@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
         System.out.println("🟡 GlobalExceptionHandler [Contratistas] - Problema detectado con el RUT: " + ex.getRut());
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                HttpStatus.NOT_FOUND, // Mantiene el 404 al no encontrar registros con ese RUT
+                HttpStatus.BAD_REQUEST,
                 ex.getMessage()
         );
 

@@ -140,9 +140,12 @@ public class ContratistaController {
     }
 
 
-        @GetMapping("/{id}/consolidado")
-        public ResponseEntity<ConsolidadoOperacionResponse> getConsolidadoOperacionResponse(@PathVariable long id) {
-        ConsolidadoOperacionResponse respuesta = contratistaService.obtenerConsolidadoPorContratista(id);
+        @GetMapping("/{rut}/consolidado")
+    public ResponseEntity<ConsolidadoOperacionResponse> getConsolidadoOperacionResponse(@PathVariable String rut) {
+        if (rut == null || rut.trim().length() < 8) {
+            throw new RutInvalidoException(rut, "El formato de RUT en la URL es inválido.");
+        }
+        ConsolidadoOperacionResponse respuesta = contratistaService.obtenerConsolidadoPorRut(rut);
         return ResponseEntity.ok(respuesta);
-}
+    }
 }

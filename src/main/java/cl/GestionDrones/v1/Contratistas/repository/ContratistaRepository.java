@@ -1,25 +1,25 @@
 package cl.GestionDrones.v1.Contratistas.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import cl.GestionDrones.v1.Contratistas.model.Contratista;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import java.util.List;
+import org.springframework.stereotype.Repository;
+import cl.GestionDrones.v1.Contratistas.model.Contratista;
 
 @Repository
 public interface ContratistaRepository extends JpaRepository<Contratista, Long> {
 
+    
+    @Query(value = "SELECT * FROM empresas_contratistas WHERE id = :id", nativeQuery = true)
+    Optional<Contratista> selectPorId(@Param("id") Long id);
+
+    
     @Query(value = "SELECT * FROM empresas_contratistas WHERE rut = :rut", nativeQuery = true)
     List<Contratista> selectPorRut(@Param("rut") String rut);
-
-    List<Contratista> findByRut(String rut);
 
     default int totalContratistas() {
         return (int) this.count();
     }
-
-    @Query("SELECT c.id FROM Contratista c WHERE c.nombreEmpresa = :nombre")
-    Long findIdByNombre(@Param("nombre") String nombre);
 }

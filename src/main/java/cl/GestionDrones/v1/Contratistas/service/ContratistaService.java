@@ -41,7 +41,7 @@ public class ContratistaService {
     }
 
     public ConsolidadoOperacionResponse obtenerConsolidadoPorRut(String rut) {
-    List<Contratista> contratistas = contratistaRepository.findByRut(rut);
+    List<Contratista> contratistas = contratistaRepository.selectPorRut(rut);
     if (contratistas.isEmpty()) {
         throw new ResourceNotFoundException("Contratista no encontrado con RUT: " + rut);
     }
@@ -112,8 +112,9 @@ public class ContratistaService {
         return contratistaRepository.save(contratista); 
     }
     
+    // Corregido para usar tu query nativa selectPorId
     public Contratista getContratistaId(long id) {
-        return contratistaRepository.findById(id)
+        return contratistaRepository.selectPorId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("El contratista con ID " + id + " no está registrado en la DGAC."));
     }
     
@@ -124,35 +125,24 @@ public class ContratistaService {
         return contratistaRepository.save(contratista);
     }
     
-    public String deleteContratista(long id) {
+    public void deleteContratista(long id) {
         if (!contratistaRepository.existsById(id)) {
             throw new ResourceNotFoundException("No se puede eliminar: El contratista con ID " + id + " no existe.");
         }
         contratistaRepository.deleteById(id);
-        return "Contratista eliminado";
     }
     
+    // Usamos exclusivamente tu método nativo centralizado
     public int totalContratistas() { 
-        return (int) contratistaRepository.count(); 
-    }
-    
-    public int totalContratistasV2() { 
         return contratistaRepository.totalContratistas(); 
     }
-    
+
+    // Buscador por RUT con Query Nativa
     public List<Contratista> obtenerPorRut(String rut) {
-        List<Contratista> listaResultados = contratistaRepository.findByRut(rut);
+        List<Contratista> listaResultados = contratistaRepository.selectPorRut(rut);
         if (listaResultados.isEmpty()) { 
-            throw new RutInvalidoException(rut); 
+            throw new RutInvalidoException(rut, "No se encontró ningún contratista asociado al RUT proporcionado."); 
         }
         return listaResultados;
-    }
-    
-    public Long obtenerIdPorNombre(String nombre) {
-        Long id = contratistaRepository.findIdByNombre(nombre);
-        if (id == null) { 
-            throw new RuntimeException("Empresa contratista no encontrada con el nombre: " + nombre); 
-        }
-        return id;
     }
 }

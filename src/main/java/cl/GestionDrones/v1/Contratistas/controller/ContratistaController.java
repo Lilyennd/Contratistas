@@ -15,6 +15,7 @@ import cl.GestionDrones.v1.Contratistas.exception.RutInvalidoException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -48,6 +49,18 @@ public class ContratistaController {
     }
 
     @Operation(summary = "Crear un nuevo contratista", description = "Registra un nuevo contratista en el sistema validando previamente su formato de RUT")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON de la nueva empresa contratista a registrar",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = CreateContratistaRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Nuevo Contratista",
+                value = "{\n  \"rut\": \"76123456-K\",\n  \"nombreEmpresa\": \"AeroServicios SkyDrone Ltda\",\n  \"telefono\": \"+56912345678\",\n  \"contactoEmail\": \"contacto@skydrone.cl\",\n  \"estado\": \"ACTIVO\"\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Contratista creado exitosamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = Contratista.class))),
@@ -55,7 +68,6 @@ public class ContratistaController {
     })
     @PostMapping
     public ResponseEntity<Contratista> agregarContratista(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON de la nueva empresa contratista a registrar", required = true)
         @Valid @RequestBody CreateContratistaRequest request
     ) {
         if (request.rut() == null || request.rut().trim().length() < 8) {
@@ -82,17 +94,28 @@ public class ContratistaController {
     }
 
     @Operation(summary = "Actualizar contratista", description = "Modifica los datos de una empresa contratista existente de acuerdo con su ID")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Estructura JSON con los nuevos campos del contratista",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = UpdateContratistaRequest.class),
+            examples = @ExampleObject(
+                name = "Ejemplo de Actualización de Contratista",
+                value = "{\n  \"rut\": \"76123456-K\",\n  \"nombreEmpresa\": \"AeroServicios SkyDrone Internacional SpA\",\n  \"telefono\": \"+56987654321\",\n  \"contactoEmail\": \"operaciones@skydrone.cl\",\n  \"estado\": \"ACTIVO\"\n}"
+            )
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Contratista actualizado exitosamente", 
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = Contratista.class))),
-        @ApiResponse(responseCode = "400", description = "RUT modificado inválido o payload incorrecto", content = @Content),
+        @ApiResponse(responseCode = "400", description = "RUT modified inválido o payload incorrecto", content = @Content),
         @ApiResponse(responseCode = "404", description = "La empresa contratista no existe en el sistema", content = @Content)
     })
     @PutMapping("/{id}")
     public ResponseEntity<Contratista> actualizarContratista(
         @Parameter(description = "ID del contratista que se desea actualizar", required = true, example = "1")
         @PathVariable long id,
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura JSON con los nuevos campos del contratista", required = true)
         @Valid @RequestBody UpdateContratistaRequest request
     ) {
         

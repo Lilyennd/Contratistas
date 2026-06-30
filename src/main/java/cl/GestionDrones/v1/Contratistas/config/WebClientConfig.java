@@ -8,7 +8,7 @@ public class WebClientConfig {
 
     @Bean
     public WebClient aeronavesWebClient(WebClient.Builder builder) {
-        return builder.baseUrl("http://localhost:8082/api/v1/aeronaves").build();
+        return builder.baseUrl("http://aeronaves.onrender.com/api/v1/aeronaves").build();
     }
 
     @Bean
